@@ -135,9 +135,23 @@ def parse_with_gemini(company_name: str, title: str, location_info: str, raw_des
             )
         )
         return JobItem.model_validate_json(response.text)
-    except Exception as e:
-        print(f"[GEMINI] パースエラー ({company_name}): {e}")
-        return None
+    except Exception:
+        # フォールバックとして gemini-2.0-flash を試行
+        try:
+            client = genai.Client(api_key=GEMINI_API_KEY)
+            response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=JobItem,
+                    temperature=0.2
+                )
+            )
+            return JobItem.model_validate_json(response.text)
+        except Exception as e:
+            print(f"[GEMINI] パースエラー ({company_name}): {e}")
+            return None
 
 def run():
     jst = timezone(timedelta(hours=9))
