@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Remote Jobs for Japan | 日本在住向けドル建て直応募ナビ</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Noto Sans JP -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0b0f19;
+      color: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #111827;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #374151;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #4b5563;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans antialiased text-slate-200">
+
+  <!-- Header Section -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-600 text-white font-bold text-lg shadow-lg shadow-indigo-500/20">
+            🌏
+          </span>
+          <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white">
+            Global Remote Jobs <span class="text-indigo-400 font-medium text-base ml-1">for Japan</span>
+          </h1>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-400 mt-1">
+          日本在住OK・ドル建て直応募求人ナビ（仲介エージェント手数料 0% / Ashby・Lever・Greenhouse一次情報直結）
+        </p>
+      </div>
+
+      <!-- Quick Metrics & Status -->
+      <div class="flex items-center gap-3">
+        <div id="statusBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="jobCountLabel">読み込み中...</span>
+        </div>
+        <button id="refreshBtn" class="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">
+          更新
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notice & Value Proposition Banner -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2 w-full">
+    <div class="p-4 rounded-xl border border-indigo-900/40 bg-gradient-to-r from-indigo-950/40 via-slate-900/40 to-slate-950/40 text-xs sm:text-sm text-slate-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-inner">
+      <div class="flex items-center gap-2.5">
+        <span class="text-base">⚡</span>
+        <span>
+          <strong class="text-indigo-300 font-semibold">直応募のメリット:</strong> 
+          人材エージェントの中抜きマージン（年収の30〜35%）なし。海外スタートアップの採用管理ATSへ直接履歴書を送信できます。
+        </span>
+      </div>
+      <div class="text-xs text-slate-400 font-mono shrink-0">
+        Source: Direct ATS & Public Repositories
+      </div>
+    </div>
+  </section>
+
+  <!-- Controls: Search, Tag Filters, Sort -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-1 w-full space-y-4">
+    
+    <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-4 space-y-3.5 backdrop-blur-sm">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+        <!-- Live Search Input -->
+        <div class="md:col-span-8 relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="企業名、職種、技術スタック、勤務地キーワードで検索..."
+            class="w-full pl-9 pr-4 py-2 bg-slate-950/80 border border-slate-700/80 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          >
+        </div>
+
+        <!-- Sort Control -->
+        <div class="md:col-span-4 flex items-center justify-end gap-2">
+          <label for="sortSelect" class="text-xs text-slate-400 shrink-0">並び順:</label>
+          <select 
+            id="sortSelect" 
+            class="bg-slate-950/80 border border-slate-700/80 rounded-lg text-xs py-2 px-3 text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="newest">新着順 (Latest)</option>
+            <option value="company_asc">企業名順 (A-Z)</option>
+            <option value="title_asc">職種名順 (A-Z)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tag Filter Buttons -->
+      <div class="flex flex-wrap items-center gap-1.5 pt-1 text-xs">
+        <span class="text-slate-400 font-medium mr-1">クイック絞り込み:</span>
+        <button class="tag-btn active px-2.5 py-1 rounded-md bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-colors" data-tag="ALL">
+          すべて
+        </button>
+        <button class="tag-btn px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors border border-slate-700" data-tag="Worldwide">
+          Worldwide
+        </button>
+        <button class="tag-btn px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors border border-slate-700" data-tag="Engineer">
+          エンジニア
+        </button>
+        <button class="tag-btn px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors border border-slate-700" data-tag="AI">
+          AI / Data
+        </button>
+        <button class="tag-btn px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors border border-slate-700" data-tag="Design">
+          Design
+        </button>
+        <button class="tag-btn px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors border border-slate-700" data-tag="Operations">
+          Operations / Sales
+        </button>
+      </div>
+    </div>
+
+    <!-- Job Table / List View Container -->
+    <div class="border border-slate-800 rounded-xl bg-slate-900/60 overflow-hidden shadow-2xl backdrop-blur-sm">
+      <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+          <thead>
+            <tr class="border-b border-slate-800 bg-slate-950/70 text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
+              <th scope="col" class="py-3 px-4 w-36 sm:w-44">企業</th>
+              <th scope="col" class="py-3 px-4">職種 / ポジション</th>
+              <th scope="col" class="py-3 px-4 hidden md:table-cell w-40">勤務形態 / 居住要件</th>
+              <th scope="col" class="py-3 px-4 hidden lg:table-cell w-48">タグ</th>
+              <th scope="col" class="py-3 px-4 text-right w-36">一次応募</th>
+            </tr>
+          </thead>
+          <tbody id="jobListBody" class="divide-y divide-slate-800/80">
+            <!-- Dynamically Rendered Rows -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="hidden py-16 text-center text-slate-400 space-y-2">
+        <p class="text-base font-semibold text-slate-300">該当する求人が見つかりませんでした</p>
+        <p class="text-xs text-slate-500">検索キーワードや絞り込みタグを変更してお試しください。</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Detail Modal -->
+  <div id="detailModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl max-h-[85vh] flex flex-col">
+      <div class="flex items-start justify-between border-b border-slate-800 pb-3">
+        <div>
+          <span id="modalCompany" class="text-xs font-semibold text-indigo-400 tracking-wider uppercase">COMPANY</span>
+          <h2 id="modalTitle" class="text-lg font-bold text-white mt-0.5">Job Title</h2>
+        </div>
+        <button id="modalCloseBtn" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+          ✕
+        </button>
+      </div>
+
+      <div class="space-y-3 overflow-y-auto custom-scrollbar flex-1 pr-1 text-xs sm:text-sm text-slate-300">
+        <div class="flex flex-wrap gap-2 text-xs">
+          <span id="modalLocation" class="px-2.5 py-1 rounded bg-slate-800 text-slate-200 border border-slate-700"></span>
+          <span id="modalSalary" class="px-2.5 py-1 rounded bg-indigo-950/60 text-indigo-300 border border-indigo-800/40"></span>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-semibold text-slate-400 mb-1 uppercase tracking-wider">概要 / Description</h4>
+          <p id="modalSummary" class="text-slate-300 leading-relaxed bg-slate-950/60 p-3.5 rounded-lg border border-slate-800 whitespace-pre-line"></p>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-semibold text-slate-400 mb-1 uppercase tracking-wider">タグ</h4>
+          <div id="modalTags" class="flex flex-wrap gap-1.5"></div>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-800 pt-4 flex items-center justify-between gap-3">
+        <span class="text-[11px] text-slate-500">※仲介業者は挟まず、企業の公式応募フォーム（ATS）へ遷移します</span>
+        <a id="modalApplyBtn" href="#" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs sm:text-sm transition-colors inline-flex items-center gap-1.5 shadow-lg shadow-indigo-600/30">
+          <span>公式ページで直接応募</span>
+          <span>→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-6 mt-8 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 space-y-1">
+      <p>Global Remote Jobs for Japan — 仲介なし・一次情報直応募アグリゲーター</p>
+      <p class="text-[11px] text-slate-600">自動生成された `jobs.json` のデータを基に表示しています。</p>
+    </div>
+  </footer>
+
+  <!-- Application Logic -->
+  <script>
+    // Fallback mock data in case jobs.json cannot be fetched (e.g. file:// protocol or before initial run)
+    const FALLBACK_JOBS = [
+      {
+        "id": "1792874637_13",
+        "company": "Vio",
+        "title": "Disputes & Chargebacks Manager",
+        "currency": "USD",
+        "salary_display": "要確認（目視チェック待ち）",
+        "remote_type": "Full Remote",
+        "location_scope": "Remote (EMEA優先 / 日本時間夜勤対応可)",
+        "tags": ["Operations & Facilities", "Worldwide", "要目視確認"],
+        "summary": "At Vio we believe booking accommodation should feel smart, fair, and effortless. We help millions of users make smarter travel decisions by comparing stays across 100+ booking sites. Responsible for managing payment dispute cases and chargeback workflows.",
+        "direct_apply_url": "https://jobs.ashbyhq.com/vio/746e6659-354a-49ef-9bab-a135d0e4ddc2/application?utm_source=arbeitnow.nl&ref=arbeitnow.nl",
+        "published_at": "2026-10-25",
+        "is_active": true
+      },
+      {
+        "id": "1792874637_14",
+        "company": "Duck Duck Go",
+        "title": "Senior Product Designer",
+        "currency": "USD",
+        "salary_display": "$140,000 - $180,000 USD",
+        "remote_type": "Full Remote",
+        "location_scope": "Worldwide (Anywhere)",
+        "tags": ["Design", "Worldwide", "Tech"],
+        "summary": "We are seeking a Senior Product Designer to craft intuitive, user-centered private search experiences. Fully distributed global company since inception.",
+        "direct_apply_url": "https://duckduckgo.com/hiring",
+        "published_at": "2026-10-25",
+        "is_active": true
+      },
+      {
+        "id": "1792874637_15",
+        "company": "Askable",
+        "title": "Software Engineer, AI Coding Tasks",
+        "currency": "USD",
+        "salary_display": "要確認",
+        "remote_type": "Full Remote",
+        "location_scope": "Worldwide",
+        "tags": ["Engineer", "AI", "Worldwide"],
+        "summary": "Join our distributed engineering squad assisting with high-throughput AI coding benchmark generation and full-stack software development.",
+        "direct_apply_url": "https://remotive.com/",
+        "published_at": "2026-10-25",
+        "is_active": true
+      },
+      {
+        "id": "1792874637_16",
+        "company": "Blockvora",
+        "title": "Backend Engineer",
+        "currency": "USD",
+        "salary_display": "要確認",
+        "remote_type": "Full Remote",
+        "location_scope": "Remote",
+        "tags": ["Engineer", "Blockchain", "Worldwide"],
+        "summary": "Building resilient decentralized infrastructure and microservices with high concurrent performance. Open to candidates in various timezones.",
+        "direct_apply_url": "https://www.arbeitnow.com/",
+        "published_at": "2026-10-25",
+        "is_active": true
+      }
+    ];
+
+    let allJobs = [];
+    let currentFilterTag = "ALL";
+
+    // Elements
+    const jobListBody = document.getElementById("jobListBody");
+    const emptyState = document.getElementById("emptyState");
+    const searchInput = document.getElementById("searchInput");
+    const sortSelect = document.getElementById("sortSelect");
+    const jobCountLabel = document.getElementById("jobCountLabel");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const tagButtons = document.querySelectorAll(".tag-btn");
+
+    // Modal elements
+    const detailModal = document.getElementById("detailModal");
+    const modalCloseBtn = document.getElementById("modalCloseBtn");
+    const modalCompany = document.getElementById("modalCompany");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalLocation = document.getElementById("modalLocation");
+    const modalSalary = document.getElementById("modalSalary");
+    const modalSummary = document.getElementById("modalSummary");
+    const modalTags = document.getElementById("modalTags");
+    const modalApplyBtn = document.getElementById("modalApplyBtn");
+
+    async function loadJobsData() {
+      jobCountLabel.textContent = "取得中...";
+      try {
+        // Fetch jobs.json generated by crawler in same folder or github pages
+        const res = await fetch("jobs.json?t=" + new Date().getTime());
+        if (!res.ok) throw new Error("HTTP error " + res.status);
+        const data = await res.json();
+        allJobs = Array.isArray(data) && data.length > 0 ? data : FALLBACK_JOBS;
+      } catch (err) {
+        console.warn("[WARN] jobs.json の読み込みに失敗したため、フォールバックデータを表示します:", err);
+        allJobs = FALLBACK_JOBS;
+      }
+      renderJobs();
+    }
+
+    function getFilteredAndSortedJobs() {
+      const q = searchInput.value.toLowerCase().trim();
+
+      let filtered = allJobs.filter(job => {
+        if (!job.is_active && job.is_active !== undefined) return false;
+
+        // Search text matching
+        const company = (job.company || "").toLowerCase();
+        const title = (job.title || "").toLowerCase();
+        const loc = (job.location_scope || "").toLowerCase();
+        const summary = (job.summary || "").toLowerCase();
+        const tags = (job.tags || []).join(" ").toLowerCase();
+
+        const matchesSearch = !q || company.includes(q) || title.includes(q) || loc.includes(q) || summary.includes(q) || tags.includes(q);
+
+        if (!matchesSearch) return false;
+
+        // Tag matching
+        if (currentFilterTag !== "ALL") {
+          const lowerTag = currentFilterTag.toLowerCase();
+          const hasTag = (job.tags || []).some(t => t.toLowerCase().includes(lowerTag)) ||
+                         title.includes(lowerTag) ||
+                         loc.includes(lowerTag);
+          if (!hasTag) return false;
+        }
+
+        return true;
+      });
+
+      // Sorting
+      const sortMode = sortSelect.value;
+      filtered.sort((a, b) => {
+        if (sortMode === "company_asc") {
+          return (a.company || "").localeCompare(b.company || "");
+        } else if (sortMode === "title_asc") {
+          return (a.title || "").localeCompare(b.title || "");
+        } else {
+          // newest
+          return (b.published_at || "").localeCompare(a.published_at || "");
+        }
+      });
+
+      return filtered;
+    }
+
+    function renderJobs() {
+      const jobs = getFilteredAndSortedJobs();
+      jobCountLabel.textContent = `${jobs.length} 件の求人を表示中`;
+
+      if (jobs.length === 0) {
+        jobListBody.innerHTML = "";
+        emptyState.classList.remove("hidden");
+        return;
+      }
+
+      emptyState.classList.add("hidden");
+
+      jobListBody.innerHTML = jobs.map((job, index) => {
+        const tagsHtml = (job.tags || []).slice(0, 3).map(t => 
+          `<span class="px-2 py-0.5 rounded text-[11px] bg-slate-800 text-slate-300 border border-slate-700/60 font-mono">${escapeHtml(t)}</span>`
+        ).join("");
+
+        const applyUrl = job.direct_apply_url || "#";
+        const isAshby = applyUrl.includes("ashbyhq.com");
+        const isLever = applyUrl.includes("lever.co");
+        const isGreenhouse = applyUrl.includes("greenhouse.io");
+
+        let badgeLabel = "直応募 (一次情報)";
+        if (isAshby) badgeLabel = "Ashbyで応募";
+        else if (isLever) badgeLabel = "Leverで応募";
+        else if (isGreenhouse) badgeLabel = "Greenhouseで応募";
+
+        return `
+          <tr class="hover:bg-slate-800/40 transition-colors group cursor-pointer" onclick="openJobDetail(${index})">
+            <!-- Company -->
+            <td class="py-3.5 px-4 font-semibold text-white whitespace-nowrap">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded bg-slate-800 flex items-center justify-center text-xs text-indigo-400 font-bold border border-slate-700">
+                  ${(job.company || "C").charAt(0)}
+                </span>
+                <span class="truncate max-w-[130px] sm:max-w-[170px]" title="${escapeHtml(job.company)}">
+                  ${escapeHtml(job.company)}
+                </span>
+              </div>
+            </td>
+
+            <!-- Job Title -->
+            <td class="py-3.5 px-4">
+              <div class="font-medium text-slate-100 group-hover:text-indigo-300 transition-colors">
+                ${escapeHtml(job.title)}
+              </div>
+              <div class="text-[11px] text-slate-400 truncate max-w-sm mt-0.5">
+                ${escapeHtml(job.summary || "詳細をクリックして確認")}
+              </div>
+            </td>
+
+            <!-- Location & Remote Scope -->
+            <td class="py-3.5 px-4 hidden md:table-cell whitespace-nowrap">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-slate-800/90 text-indigo-200 border border-slate-700">
+                🌐 ${escapeHtml(job.location_scope || "Worldwide")}
+              </span>
+            </td>
+
+            <!-- Tags -->
+            <td class="py-3.5 px-4 hidden lg:table-cell">
+              <div class="flex flex-wrap gap-1">
+                ${tagsHtml}
+              </div>
+            </td>
+
+            <!-- Action Button -->
+            <td class="py-3.5 px-4 text-right whitespace-nowrap" onclick="event.stopPropagation()">
+              <a 
+                href="${escapeHtml(applyUrl)}" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/20 transition-transform active:scale-95"
+              >
+                ${badgeLabel}
+              </a>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function openJobDetail(index) {
+      const currentList = getFilteredAndSortedJobs();
+      const job = currentList[index];
+      if (!job) return;
+
+      modalCompany.textContent = job.company || "UNKNOWN COMPANY";
+      modalTitle.textContent = job.title || "Job Title";
+      modalLocation.textContent = "📍 " + (job.location_scope || "Worldwide Remote");
+      modalSalary.textContent = "💰 " + (job.salary_display || "要確認（目視待ち）");
+      modalSummary.textContent = job.summary || "詳細情報はありません。公式応募ページをご確認ください。";
+      modalApplyBtn.href = job.direct_apply_url || "#";
+
+      modalTags.innerHTML = (job.tags || []).map(t => 
+        `<span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-300 border border-slate-700">${escapeHtml(t)}</span>`
+      ).join("");
+
+      detailModal.classList.remove("hidden");
+    }
+
+    function closeJobDetail() {
+      detailModal.classList.add("hidden");
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return str.replace(/[&<>"']/g, function(m) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        }[m];
+      });
+    }
+
+    // Event Listeners
+    searchInput.addEventListener("input", renderJobs);
+    sortSelect.addEventListener("change", renderJobs);
+    refreshBtn.addEventListener("click", loadJobsData);
+    modalCloseBtn.addEventListener("click", closeJobDetail);
+    detailModal.addEventListener("click", (e) => {
+      if (e.target === detailModal) closeJobDetail();
+    });
+
+    tagButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        tagButtons.forEach(b => {
+          b.classList.remove("bg-indigo-600", "text-white");
+          b.classList.add("bg-slate-800", "text-slate-300");
+        });
+        btn.classList.remove("bg-slate-800", "text-slate-300");
+        btn.classList.add("bg-indigo-600", "text-white");
+
+        currentFilterTag = btn.getAttribute("data-tag");
+        renderJobs();
+      });
+    });
+
+    // Initial Load
+    window.addEventListener("DOMContentLoaded", loadJobsData);
+  </script>
+</body>
+</html>
