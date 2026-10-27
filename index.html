@@ -502,15 +502,13 @@
       </colgroup>
       <thead>
         <tr>
-          <th data-key="updated_at" class="sorted">更新日時 ▼</th>
-          <th data-key="company">企業名 ↕</th>
-          <th data-key="title">募集ポジション / 職種 ↕</th>
-          <th data-key="salary_val" title="※同社US公式開示からの試算参考値です。実際の日本提示額は為替・RSU・勤務地係数等により変動します（提示保証なし）。">
-            想定年収 (US開示突合) <span class="th-info-icon">ⓘ</span> ↕
-          </th>
-          <th data-key="tag_val">勤務形態 ↕</th>
-          <th data-key="location">拠点 / 勤務地 (RAW) ↕</th>
-          <th data-key="ats">ATS ↕</th>
+          <th onclick="sortTable('company')">企業名 <span id="sort_company">↕</span></th>
+          <th onclick="sortTable('title')">募集ポジション / 職種 <span id="sort_title">↕</span></th>
+          <th onclick="sortTable('salary')">想定年収 (US開示突合) <span title="米国給与透明化法等に基づく開示額を実為替レートで円換算した参考値">ⓘ</span> <span id="sort_salary">↕</span></th>
+          <th onclick="sortTable('tag')">勤務形態 <span id="sort_tag">↕</span></th>
+          <th onclick="sortTable('location')">拠点 / 勤務地 (RAW) <span id="sort_location">↕</span></th>
+          <th onclick="sortTable('updated')">更新日時 <span id="sort_updated">▼</span></th>
+          <th onclick="sortTable('ats')">ATS <span id="sort_ats">↕</span></th>
         </tr>
       </thead>
       <tbody id="jobsTbody">
@@ -823,23 +821,23 @@
         const safeLocation = escapeHtml(job.location || "Not Specified");
         const tagsHtml = (job.tags || []).map(getTagPill).join("");
 
-        return `
-          <tr>
-            <td style="color: var(--text-muted); font-size: 12px;">${dateStr}</td>
-            <td>${getCompanyHtml(job.company)}</td>
-            <td>
-              <a href="${safeApplyUrl}" target="_blank" rel="noopener noreferrer" class="job-title-link" title="${safeTitle}">
-                ${safeTitle} ↗
-              </a>
-            </td>
-            <td>${renderSalaryCell(job)}</td>
-            <td>${tagsHtml}</td>
-            <td class="location-cell" title="${safeLocation}">
-              ${safeLocation}
-            </td>
-            <td>${getAtsBadge(job.ats)}</td>
-          </tr>
-        `;
+       return `
+        <tr>
+          <td>${getCompanyHtml(job.company)}</td>
+          <td>
+            <a href="${safeApplyUrl}" target="_blank" rel="noopener noreferrer" class="job-title-link" title="${safeTitle}">
+              ${safeTitle} ↗
+            </a>
+          </td>
+          <td>${renderSalaryCell(job)}</td>
+          <td>${tagsHtml}</td>
+          <td class="location-cell" title="${safeLocation}">
+            ${safeLocation}
+          </td>
+          <td style="color: var(--text-muted); font-size: 12px;">${dateStr}</td>
+          <td>${getAtsBadge(job.ats)}</td>
+        </tr>
+      `;
       }).join("");
     }
 
