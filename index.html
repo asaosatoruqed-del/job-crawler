@@ -804,6 +804,21 @@
       };
 
       filtered.sort((a, b) => {
+          // --- 検索クエリがある場合、企業名の一致度を最優先にする ---
+        if (query) {
+          const aCompany = (a.company || "").toLowerCase();
+          const bCompany = (b.company || "").toLowerCase();
+          
+          // 企業名が検索ワードで始まるものを最優先 (例: "open" -> "openai")
+          const aStarts = aCompany.startsWith(query) ? 2 : (aCompany.includes(query) ? 1 : 0);
+          const bStarts = bCompany.startsWith(query) ? 2 : (bCompany.includes(query) ? 1 : 0);
+          
+          if (aStarts !== bStarts) {
+            return bStarts - aStarts; // 一致度が高い方を上に
+          }
+        }
+
+        // --- 以下は既存のソートロジック（そのまま） ---
         let valA, valB;
         if (currentSortKey === "salary_val") {
           valA = a.salary?.usd_low || 0;
