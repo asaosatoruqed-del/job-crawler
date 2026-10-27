@@ -842,8 +842,11 @@
         return 0;
       });
 
-      document.getElementById("countDisplay").innerText = filtered.length.toLocaleString();
-      document.getElementById("countTotal").innerText = allJobs.length.toLocaleString();
+      const countDispEl = document.getElementById("countDisplay");
+      if (countDispEl) countDispEl.innerText = filtered.length.toLocaleString();
+
+      const countTotEl = document.getElementById("countTotal");
+      if (countTotEl) countTotEl.innerText = allJobs.length.toLocaleString();
 
       const tbody = document.getElementById("jobsTbody");
       if (filtered.length === 0) {
