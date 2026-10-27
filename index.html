@@ -414,6 +414,38 @@
     }
 
     #fileInput { display: none; }
+
+/* タイトル下の英語・バッジの配置調整 */
+.site-sub-title {
+  font-size: 0.65em;
+  font-weight: 600;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* スマホ表示（画面幅768px以下）の最適化 */
+@media (max-width: 768px) {
+  body {
+    padding: 12px 10px;
+  }
+  h1 {
+    font-size: 1.25rem !important;
+    line-height: 1.3 !important;
+  }
+  .catch-lead {
+    font-size: 11px !important;
+  }
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  table {
+    min-width: 750px; /* 表が潰れず、指でスムーズに横スワイプできるようにする */
+  }
+}
   </style>
 </head>
 <body>
@@ -426,7 +458,10 @@
 
   <div class="header-area">
     <div class="title-group">
-      <h1>テック・ダイレクト・ジャパン Tech Direct Japan <span class="badge-japan">TDJ</span></h1>
+      <h1>
+  テック・ダイレクト・ジャパン
+  <div class="site-sub-title">Tech Direct Japan <span class="badge-japan">TDJ</span></div>
+</h1>
       <div class="catch-lead">「うわっ、世界の年収、高すぎ…？」── 国内でも、海外現地でも。日本のエンジニアに世界基準の選択肢を。</div>
       <div class="subtitle">
         外資・グローバルテック公式一次求人 ＆ 米国基準年収直結シート
