@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Direct ATS Radar - Japan Tech Jobs</title>
+  <title>テックレター (TechLetter Japan) - 外資・グローバルテック求人直通便 ＆ 年収参照シート</title>
   <style>
     :root {
       --bg-base: #f8fafc;
@@ -458,20 +458,25 @@
 
   <div class="header-area">
     <div class="title-group">
-      <h1>
-  テック・ダイレクト・ジャパン
-  <div class="site-sub-title">Tech Direct Japan <span class="badge-japan">TDJ</span></div>
-</h1>
-      <div class="catch-lead">「うわっ、世界の年収、高すぎ…？」── 国内でも、海外現地でも。日本のエンジニアに世界基準の選択肢を。</div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <!-- SVGシンボルアイコン：封筒 × コードタグ × グリーンアクセント -->
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+          <rect x="2" y="4" width="20" height="16" rx="3" stroke="#0284c7" stroke-width="2" fill="#f0f9ff"/>
+          <path d="M4 6L10 11.5C11.2 12.5 12.8 12.5 14 11.5L20 6" stroke="#0284c7" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="17.5" cy="15.5" r="2.5" fill="#10b981"/>
+        </svg>
+
+        <h1>
+          テックレター
+          <div class="site-sub-title">TechLetter Japan <span class="badge-japan">TLJ</span></div>
+        </h1>
+      </div>
+      <div class="catch-lead">「うわっ、世界の年収、高すぎじゃない…？」── 国内でも、海外現地でも、日本のエンジニアに世界基準の選択肢を。</div>
       <div class="subtitle">
-        外資・グローバルテック公式一次求人 ＆ 米国基準年収直結シート
+        外資・グローバルテック求人直通便 ＆ 米国基準年収参照シート
         <span id="rateDisplay" class="rate-badge">レート取得中...</span>
       </div>
     </div>
-    <div class="counts-box">
-      表示: <span id="countDisplay">0</span> / 全件: <span id="countTotal">0</span>
-    </div>
-  </div>
 
   <div class="controls-row">
     <input type="text" id="searchInput" class="search-input" placeholder="🔍 職種、企業名、言語 (Go, Rust, Python, AI, React)、勤務地で検索...">
@@ -540,11 +545,12 @@
           フィードバックを送る ↗
         </a>
       </div>
-      <div class="credit-box">
-        <div>テック・ダイレクト・ジャパン(Tech Direct JAPAN)</div>
+     <div class="credit-box">
+        <div>テックレター (TechLetter Japan)</div>
         <div class="author-line">
           Built for Japanese Engineers • Developed by <a href="https://x.com/your_account" target="_blank" rel="noopener noreferrer">@</a>
         </div>
+      </div>
       </div>
     </div>
   </footer>
