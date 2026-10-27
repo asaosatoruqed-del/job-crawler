@@ -741,7 +741,12 @@
       const isRef = job.salary_is_reference;
       const safeSourceUrl = sanitizeUrl(job.salary.source_url);
       const safeRawText = escapeHtml(job.salary.raw);
-      const safeJpyApprox = escapeHtml(job.salary.jpy_approx);
+
+      // 「¥」を消して「万」を「万円」に変換（例: ¥3,480万～¥4,500万 -> 3,480万円～4,500万円）
+      let displayJpy = (job.salary.jpy_approx || '')
+        .replace(/¥/g, '')
+        .replace(/万/g, '万円');
+      const safeJpyApprox = escapeHtml(displayJpy);
 
       let linkHtml = (safeSourceUrl !== "#")
         ? `<a href="${safeSourceUrl}" target="_blank" rel="noopener noreferrer" class="salary-source-link" title="根拠となるUS公式求人票を開く">${safeRawText} ↗</a>`
@@ -769,7 +774,16 @@
           if (!tags.includes(currentTag)) return false;
         }
         if (query) {
-          const haystack = `${job.title} ${job.company} ${job.location} ${job.ats} ${job.salary?.jpy_approx || ""} ${job.salary?.raw || ""}`.toLowerCase();
+          // 年収文字列のゆらぎ（「万」「万円」「カンマなし数字」）を検索対象に含める
+          let salarySearchText = "";
+          if (job.salary) {
+            const jpyRaw = job.salary.jpy_approx || "";
+            const jpyWithEn = jpyRaw.replace(/¥/g, "").replace(/万/g, "万円"); // 例: 3,480万円～4,500万円
+            const jpyNoComma = jpyWithEn.replace(/,/g, "");                     // 例: 3480万円～4500万円
+            salarySearchText = `${jpyRaw} ${jpyWithEn} ${jpyNoComma} ${job.salary.raw || ""}`;
+          }
+
+          const haystack = `${job.title} ${job.company} ${job.location} ${job.ats} ${salarySearchText}`.toLowerCase();
           if (!haystack.includes(query)) return false;
         }
         return true;
