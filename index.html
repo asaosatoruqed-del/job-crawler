@@ -692,14 +692,16 @@
       try {
         const res = await fetch("jobs.json?t=" + Date.now());
         if (res.ok) {
-          allJobs = await res.json();
-          document.getElementById("statusMsg").innerText = "● 接続完了: jobs.json (" + allJobs.length.toLocaleString() + " 件)";
-          updateRateDisplay();
-          renderTable();
+        allJobs = await res.json();
+        const statusEl = document.getElementById("statusMsg");
+        if (statusEl) statusEl.innerText = "● 接続完了: jobs.json (" + allJobs.length.toLocaleString() + " 件)";
+        updateRateDisplay();
+        renderTable();
           return;
         }
       } catch (e) {}
-      document.getElementById("statusMsg").innerText = "● 右上の「Load custom JSON」から jobs.json を読み込んでください";
+      const statusElCatch = document.getElementById("statusMsg");
+      if (statusElCatch) statusElCatch.innerText = "● 右上の「Load custom JSON」から jobs.json を読み込んでください";
     }
 
     function updateRateDisplay() {
