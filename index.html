@@ -425,14 +425,10 @@
 </head>
 <body>
 
-  <div class="top-bar">
-    <div id="statusMsg">● 読込待機中...</div>
-    <div>
-      Direct ATS Aggregation (No Agents • Zero Spread Fees)
-      <span class="load-btn" onclick="document.getElementById('fileInput').click()">Load custom JSON</span>
-      <input type="file" id="fileInput" accept=".json">
-    </div>
-  </div>
+ <!-- 開発用トップバーを非表示化 -->
+  <input type="file" id="fileInput" accept=".json" style="display: none;">
+
+  <div class="header-area">
 
   <div class="header-area">
     <div class="title-group">
