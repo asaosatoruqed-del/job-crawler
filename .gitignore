@@ -218,3 +218,11 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- Project Specific Security Additions ---
+*.token
+*.pem
+*.key
+credentials.json
+.DS_Store
+Thumbs.db

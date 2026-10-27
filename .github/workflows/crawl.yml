@@ -1,40 +1,44 @@
-name: Auto Job Crawler
+name: Daily ATS & Currency Update
 
 on:
   schedule:
-    # 毎朝6時（JST）に自動実行
+    # 毎日 日本時間 朝6:00 (UTC 21:00) に自動実行
     - cron: '0 21 * * *'
-  workflow_dispatch: # 手動で即座にテスト実行できるボタン
+  workflow_dispatch: # GitHub管理画面から手動実行できるボタンを有効化
 
+# 権限をリポジトリ書き込みのみに限定
 permissions:
   contents: write
 
 jobs:
-  crawl:
+  crawl-and-update:
     runs-on: ubuntu-latest
+
+    # 外部フォークからの不正実行を防止（所有者リポジトリでのみ稼働）
+    if: github.repository_owner == github.actor
+
     steps:
-      - name: Check out repository
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
 
       - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip install -r requirements.txt
+        run: pip install requests==2.32.3
 
       - name: Run Crawler
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          python main.py
+        run: python multi_ats_crawler.py
 
-      - name: Commit and push jobs.json
+      - name: Commit and Push if updated
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action Bot"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          # jobs.json のみをステージングして安全にコミット
           git add jobs.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Update jobs.json [skip ci]" && git push)
+          git diff --staged --quiet || (git commit -m "chore: auto-update jobs.json [$(date +'%Y-%m-%d')]" && git push)
